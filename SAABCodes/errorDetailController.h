@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  errorDetailController.h
 //  SAABCodes
 //
 //  Created by Paul Derbyshire on 04/11/2015.
@@ -8,8 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface ViewController : NSViewController
+@interface errorDetailController : NSViewController {
+	
+}
 
+@property (nonatomic,strong) NSDictionary *detailDictionary;
 
 @end
-
