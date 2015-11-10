@@ -48,23 +48,33 @@
 - (NSView *)tableView:(NSTableView *)tableView
    viewForTableColumn:(NSTableColumn *)tableColumn
 				  row:(NSInteger)row {
- 
-	NSTableCellView *result = [tableView makeViewWithIdentifier:@"cellMain" owner:self];
 	
-	NSString *codeString = [[self.filteredArray objectAtIndex:row] valueForKey:@"Code"];
-	NSString *cellString = [NSString stringWithFormat:@"%@ - %@",codeString,[[self.filteredArray objectAtIndex:row] valueForKey:@"Description"]];
-	result.textField.stringValue = cellString;
-	
-	return result;
+	if ([tableColumn.identifier isEqualToString:@"columnCode"]) {
+		NSTableCellView *result = [tableView makeViewWithIdentifier:@"cellMain" owner:self];
+		NSString *codeString = [[self.filteredArray objectAtIndex:row] valueForKey:@"Code"];
+		NSString *cellString = codeString;
+		result.textField.stringValue = cellString;
+		return result;
+		
+	}else {
+		NSTableCellView *result = [tableView makeViewWithIdentifier:@"cellDescription" owner:self];
+		NSString *cellString = [[self.filteredArray objectAtIndex:row] valueForKey:@"Description"];
+		result.textField.stringValue = cellString;
+		return result;
+	}
 }
 
 
 -(void)tableViewSelectionDidChange:(NSNotification *)notification {
 	
 	NSInteger clickedRow = [self.tableViewMain selectedRow];
+	if (clickedRow < 0) {
+		return;
+	}
+	
 	NSDictionary *detailDict = [self.filteredArray objectAtIndex:clickedRow];
 	
-	NSRect cellRect = [self.tableViewMain frameOfCellAtColumn:0 row:clickedRow];
+	NSRect cellRect = [self.tableViewMain frameOfCellAtColumn:1 row:clickedRow];
 	
 	if (self.presentedViewControllers.count > 0) {
 		[self dismissViewController:[self.presentedViewControllers objectAtIndex:0]];
@@ -77,14 +87,18 @@
 }
 
 -(void)tableDoubleClickAction {
+	
 	if (self.presentedViewControllers.count > 0) {
+		return;
+	}
+	if ([self.tableViewMain selectedRow] < 0) {
 		return;
 	}
 	
 	NSInteger clickedRow = [self.tableViewMain clickedRow];
 	NSDictionary *detailDict = [self.filteredArray objectAtIndex:clickedRow];
 	
-	NSRect cellRect = [self.tableViewMain frameOfCellAtColumn:0 row:clickedRow];
+	NSRect cellRect = [self.tableViewMain frameOfCellAtColumn:1 row:clickedRow];
 	errorDetailController *controllerDetails = [[NSStoryboard storyboardWithName:@"Main" bundle:nil] instantiateControllerWithIdentifier:@"popoverController"];
 	[controllerDetails setDetailDictionary:detailDict];
 	
